@@ -1,10 +1,14 @@
 package com.nalcalag.sportsperson;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -16,6 +20,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity {
+
     private String TAG = MainActivity.class.getSimpleName();
     private ProgressDialog pDialog;
     JSONObject response;
@@ -37,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         realm = Realm.getInstance(sportspeople);
     }
 
+    public void launchAbout(View view){
+        Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
+    }
 
     private class ProcessJSON extends AsyncTask<String, Void, String> {
 
@@ -119,5 +128,28 @@ public class MainActivity extends AppCompatActivity {
             if (pDialog.isShowing())
                 pDialog.dismiss();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.about) {
+            launchAbout(null);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

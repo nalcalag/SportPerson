@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sportsperson</string>
+    <string name="aboutActivity_label">About</string>
+    <string name="info">This app is about...</string>
 </resources>
