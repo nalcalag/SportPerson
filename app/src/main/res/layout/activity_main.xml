@@ -12,6 +12,12 @@
     tools:context="com.nalcalag.sportsperson.MainActivity">
 
     <TextView
+        android:id="@+id/playerId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+    <TextView
+        android:id="@+id/playerId2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />

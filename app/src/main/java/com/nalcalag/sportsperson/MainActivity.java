@@ -1,6 +1,8 @@
 package com.nalcalag.sportsperson;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -18,6 +21,7 @@ import org.json.JSONObject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     JSONObject response;
     Realm realm;
     String url = "https://gist.githubusercontent.com/joshheald/d26b89b0fbaf4e26cb423913ada21b83/raw/174a7ac0916919d4ae171adcfc0af78811b185f3/sportspeople.json";
-    RealmList<Person> peopleList = new RealmList<>();
-
+    int personId1;
+    int personId2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,40 @@ public class MainActivity extends AppCompatActivity {
         RealmConfiguration sportspeople = new RealmConfiguration.Builder(getBaseContext())
                 .name("sportspeople.realm").build();
         realm = Realm.getInstance(sportspeople);
+
+        // Get all players
+        final RealmResults<Person> peopleListResults = realm.where(Person.class).findAll();
+
+        // In case the first time the user doesn't have network
+        if(peopleListResults.isEmpty()){
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setMessage("No network connection, check device settings and try again.");
+            alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            alertDialog.show();
+        }else{
+            // Show 2 random people
+            personId1 = randomNumber(peopleListResults.size()) - 1;
+            personId2 = randomNumber(peopleListResults.size()) - 1;
+            while (personId1 == personId2) {
+                personId2 = randomNumber(peopleListResults.size()) - 1;
+            }
+        }
+
+        TextView textView1 = (TextView) findViewById(R.id.playerId);
+        TextView textView2 = (TextView) findViewById(R.id.playerId2);
+        textView1.setText(String.valueOf(personId1));
+        textView2.setText(String.valueOf(personId2));
+    }
+
+    public int randomNumber(int range){
+        int num;
+        num = (int) (Math.random() * range) + 1;
+        return num;
     }
 
     public void launchAbout(View view){
@@ -76,10 +114,11 @@ public class MainActivity extends AppCompatActivity {
             if (stream != null) {
                 try{
                     response = new JSONObject(stream);
-//                  // Getting JSON Array node
+                    // Getting JSON Array node
                     JSONArray jsonArray = response.getJSONArray("sportspeople");
                     Log.d("JSON", jsonArray.toString());
 
+                    RealmList<Person> peopleList = new RealmList<>();
                     // looping through All Sportspeople
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject c = jsonArray.getJSONObject(i);
