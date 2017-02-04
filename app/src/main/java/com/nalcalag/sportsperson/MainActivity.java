@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +12,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,15 +28,25 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
+import static java.security.AccessController.getContext;
+
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = MainActivity.class.getSimpleName();
     private ProgressDialog pDialog;
     JSONObject response;
     Realm realm;
+    RealmResults<Person> peopleListResults;
     String url = "https://gist.githubusercontent.com/joshheald/d26b89b0fbaf4e26cb423913ada21b83/raw/174a7ac0916919d4ae171adcfc0af78811b185f3/sportspeople.json";
     int personId1;
     int personId2;
+    Person player1;
+    Person player2;
+
+    Button btn_player1;
+    Button btn_player2;
+    TextView result;
+    Button btn_play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +60,73 @@ public class MainActivity extends AppCompatActivity {
                 .name("sportspeople.realm").build();
         realm = Realm.getInstance(sportspeople);
 
-        // Get all players
-        final RealmResults<Person> peopleListResults = realm.where(Person.class).findAll();
+        // Get all players from RealmDataBase
+        peopleListResults = realm.where(Person.class).findAll();
 
-        // In case the first time the user doesn't have network
-        if(peopleListResults.isEmpty()){
+        // Show Two Players
+        showSportpeople();
+
+        // Check user choice
+        checkChoice();
+
+    }
+
+    private void checkChoice() {
+        //Set Buttons Views
+        btn_player1 = (Button) findViewById(R.id.btn_player1);
+        btn_player2 = (Button) findViewById(R.id.btn_player2);
+        result = (TextView) findViewById(R.id.result);
+        btn_play = (Button) findViewById(R.id.btn_play);
+
+
+        // Get player's points
+        final double points_player1 = player1.getPoints();
+        final double points_player2 = player2.getPoints();
+
+        //Set Buttons click
+        btn_player1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (points_player1 > points_player2) {
+                    userWin();
+                } else {
+                    userLose();
+                }
+            }
+        });
+
+        btn_player2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (points_player2 > points_player1) {
+                    userWin();
+                } else {
+                    userLose();
+                }
+            }
+        });
+    }
+
+    private void userWin() {
+        // Set Winner msg
+        result.setVisibility(View.VISIBLE);
+        result.setText("@strings/win_message");
+        result.setTextColor(Color.GREEN);
+        //Show button to play again
+        btn_play.setVisibility(View.VISIBLE);
+    }
+
+    private void userLose() {
+        // Set Winner msg
+        result.setVisibility(View.VISIBLE);
+        result.setText("@strings/lose_message");
+        result.setTextColor(Color.RED);
+        //Show button to play again
+        btn_play.setVisibility(View.VISIBLE);
+    }
+
+    private void showSportpeople() {
+        if(peopleListResults.isEmpty()){ // Not RealmDatabe in the phone
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setMessage("No network connection, check device settings and try again.");
             alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
@@ -60,18 +137,28 @@ public class MainActivity extends AppCompatActivity {
             });
             alertDialog.show();
         }else{
-            // Show 2 random people
+            //Get two random player's id
             personId1 = randomNumber(peopleListResults.size()) - 1;
             personId2 = randomNumber(peopleListResults.size()) - 1;
             while (personId1 == personId2) {
                 personId2 = randomNumber(peopleListResults.size()) - 1;
             }
-        }
 
-        TextView textView1 = (TextView) findViewById(R.id.playerId);
-        TextView textView2 = (TextView) findViewById(R.id.playerId2);
-        textView1.setText(String.valueOf(personId1));
-        textView2.setText(String.valueOf(personId2));
+            //Get people with these ids
+            //Person1
+            player1 = peopleListResults.get(personId1);
+            TextView name_player1 = (TextView) findViewById(R.id.name_player1);
+            name_player1.setText(player1.getFullName());
+            ImageView img_player1 = (ImageView) findViewById(R.id.image_player1);
+            Picasso.with(this).load(player1.getPicture()).into(img_player1);
+
+            //Person2
+            player2 = peopleListResults.get(personId2);
+            TextView name_player2 = (TextView) findViewById(R.id.name_player2);
+            name_player2.setText(player2.getFullName());
+            ImageView img_player2 = (ImageView) findViewById(R.id.image_player2);
+            Picasso.with(this).load(player2.getPicture()).into(img_player2);
+        }
     }
 
     public int randomNumber(int range){

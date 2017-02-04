@@ -13,12 +13,99 @@
 
     <TextView
         android:id="@+id/playerId"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Choose the best player"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/name_player1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name" />
+            <ImageView
+                android:id="@+id/image_player1"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@mipmap/ic_launcher"/>
+            <Button
+                android:id="@+id/btn_player1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose"
+                android:textColor="#fff"
+                android:backgroundTint="#36c565"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.2"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/vs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vs"
+                android:layout_marginTop="50dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/name_player2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name" />
+            <ImageView
+                android:id="@+id/image_player2"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@mipmap/ic_launcher"/>
+            <Button
+                android:id="@+id/btn_player2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose"
+                android:textColor="#fff"
+                android:backgroundTint="#36c565"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/playerId2"
-        android:layout_width="wrap_content"
+        android:id="@+id/result"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Result"
+        android:gravity="center"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Play Again"
+        android:textColor="#fff"
+        android:backgroundTint="#1493FF"
+        android:layout_marginTop="30dp"
+        android:visibility="invisible"/>
+
 </LinearLayout>

@@ -2,4 +2,7 @@
     <string name="app_name">Sportsperson</string>
     <string name="aboutActivity_label">About</string>
     <string name="info">This app is about...</string>
+    <string name="vs">VS</string>
+    <string name="win_message">Congratulations you won!</string>
+    <string name="lose_message">Sorry you lost</string>
 </resources>
