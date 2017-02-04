@@ -87,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         btn_player1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Set Result layout
+                setResultView();
+
                 if (points_player1 > points_player2) {
                     userWin();
                 } else {
@@ -98,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
         btn_player2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Set Result layout
+                setResultView();
+
                 if (points_player2 > points_player1) {
                     userWin();
                 } else {
@@ -105,24 +111,57 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    private void setResultView() {
+        // Disable choose Buttons
+        btn_player1.setEnabled(false);
+        btn_player2.setEnabled(false);
+        // Show message and play again button
+        result.setVisibility(View.VISIBLE);
+        btn_play.setVisibility(View.VISIBLE);
     }
 
     private void userWin() {
         // Set Winner msg
-        result.setVisibility(View.VISIBLE);
-        result.setText("@strings/win_message");
+        result.setText(R.string.win_message);
         result.setTextColor(Color.GREEN);
-        //Show button to play again
-        btn_play.setVisibility(View.VISIBLE);
+        newgame();
     }
 
     private void userLose() {
         // Set Winner msg
-        result.setVisibility(View.VISIBLE);
-        result.setText("@strings/lose_message");
+        result.setText(R.string.lose_message);
         result.setTextColor(Color.RED);
-        //Show button to play again
-        btn_play.setVisibility(View.VISIBLE);
+        newgame();
+    }
+
+    private void newgame() {
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set new game view
+                if (!btn_player1.isEnabled()) {
+                    btn_player1.setEnabled(true);
+                }
+                if (!btn_player2.isEnabled()) {
+                    btn_player2.setEnabled(true);
+                }
+                if (result.getVisibility() == View.VISIBLE) {
+                    result.setVisibility(View.INVISIBLE);
+                }
+                if (btn_play.getVisibility() == View.VISIBLE) {
+                    btn_play.setVisibility(View.INVISIBLE);
+                }
+                // Show Two Players
+                showSportpeople();
+
+                // Check user choice
+                checkChoice();
+            }
+        });
+
     }
 
     private void showSportpeople() {
@@ -137,10 +176,11 @@ public class MainActivity extends AppCompatActivity {
             });
             alertDialog.show();
         }else{
+
             //Get two random player's id
             personId1 = randomNumber(peopleListResults.size()) - 1;
             personId2 = randomNumber(peopleListResults.size()) - 1;
-            while (personId1 == personId2) {
+            while (personId2 == personId1) { //Check it is not the same person
                 personId2 = randomNumber(peopleListResults.size()) - 1;
             }
 
@@ -167,13 +207,7 @@ public class MainActivity extends AppCompatActivity {
         return num;
     }
 
-    public void launchAbout(View view){
-        Intent i = new Intent(this, AboutActivity.class);
-        startActivity(i);
-    }
-
     private class ProcessJSON extends AsyncTask<String, Void, String> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -256,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Set menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -278,4 +313,10 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void launchAbout(View view){
+        Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
+    }
+
 }

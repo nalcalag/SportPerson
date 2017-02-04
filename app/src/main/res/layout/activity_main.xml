@@ -94,7 +94,6 @@
         android:text="Result"
         android:gravity="center"
         android:textSize="25dp"
-        android:textStyle="bold"
         android:visibility="invisible"/>
 
     <Button
