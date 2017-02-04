@@ -6,4 +6,8 @@
         android:icon="@android:drawable/ic_menu_info_details"
         android:orderInCategory="10"
         app:showAsAction="always" />
+    <item android:title="Exit"
+        android:id="@+id/exit"
+        android:orderInCategory="10"
+        app:showAsAction="never" />
 </menu>

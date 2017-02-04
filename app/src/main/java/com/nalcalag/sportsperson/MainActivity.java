@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private ProgressDialog pDialog;
     JSONObject response;
+    RealmConfiguration sportspeople;
     Realm realm;
     RealmResults<Person> peopleListResults;
     String url = "https://gist.githubusercontent.com/joshheald/d26b89b0fbaf4e26cb423913ada21b83/raw/174a7ac0916919d4ae171adcfc0af78811b185f3/sportspeople.json";
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     Button btn_player2;
     TextView result;
     Button btn_play;
+    double points_player1;
+    double points_player2;
+    TextView text_points_player1;
+    TextView text_points_player2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,157 +61,27 @@ public class MainActivity extends AppCompatActivity {
         //Get data from JSON and save it in a Realm Database
         new ProcessJSON().execute(url);
 
-        RealmConfiguration sportspeople = new RealmConfiguration.Builder(getBaseContext())
+        sportspeople = new RealmConfiguration.Builder(getBaseContext())
                 .name("sportspeople.realm").build();
         realm = Realm.getInstance(sportspeople);
 
         // Get all players from RealmDataBase
         peopleListResults = realm.where(Person.class).findAll();
 
-        // Show Two Players
-        showSportpeople();
 
-        // Check user choice
-        checkChoice();
-
-    }
-
-    private void checkChoice() {
         //Set Buttons Views
         btn_player1 = (Button) findViewById(R.id.btn_player1);
         btn_player2 = (Button) findViewById(R.id.btn_player2);
         result = (TextView) findViewById(R.id.result);
         btn_play = (Button) findViewById(R.id.btn_play);
-
-
-        // Get player's points
-        final double points_player1 = player1.getPoints();
-        final double points_player2 = player2.getPoints();
-
-        //Set Buttons click
-        btn_player1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Set Result layout
-                setResultView();
-
-                if (points_player1 > points_player2) {
-                    userWin();
-                } else {
-                    userLose();
-                }
-            }
-        });
-
-        btn_player2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Set Result layout
-                setResultView();
-
-                if (points_player2 > points_player1) {
-                    userWin();
-                } else {
-                    userLose();
-                }
-            }
-        });
+        text_points_player1 = (TextView) findViewById(R.id.points_player1);
+        text_points_player2 = (TextView) findViewById(R.id.points_player2);
 
     }
 
-    private void setResultView() {
-        // Disable choose Buttons
-        btn_player1.setEnabled(false);
-        btn_player2.setEnabled(false);
-        // Show message and play again button
-        result.setVisibility(View.VISIBLE);
-        btn_play.setVisibility(View.VISIBLE);
-    }
-
-    private void userWin() {
-        // Set Winner msg
-        result.setText(R.string.win_message);
-        result.setTextColor(Color.GREEN);
-        newgame();
-    }
-
-    private void userLose() {
-        // Set Winner msg
-        result.setText(R.string.lose_message);
-        result.setTextColor(Color.RED);
-        newgame();
-    }
-
-    private void newgame() {
-        btn_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Set new game view
-                if (!btn_player1.isEnabled()) {
-                    btn_player1.setEnabled(true);
-                }
-                if (!btn_player2.isEnabled()) {
-                    btn_player2.setEnabled(true);
-                }
-                if (result.getVisibility() == View.VISIBLE) {
-                    result.setVisibility(View.INVISIBLE);
-                }
-                if (btn_play.getVisibility() == View.VISIBLE) {
-                    btn_play.setVisibility(View.INVISIBLE);
-                }
-                // Show Two Players
-                showSportpeople();
-
-                // Check user choice
-                checkChoice();
-            }
-        });
-
-    }
-
-    private void showSportpeople() {
-        if(peopleListResults.isEmpty()){ // Not RealmDatabe in the phone
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage("No network connection, check device settings and try again.");
-            alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            alertDialog.show();
-        }else{
-
-            //Get two random player's id
-            personId1 = randomNumber(peopleListResults.size()) - 1;
-            personId2 = randomNumber(peopleListResults.size()) - 1;
-            while (personId2 == personId1) { //Check it is not the same person
-                personId2 = randomNumber(peopleListResults.size()) - 1;
-            }
-
-            //Get people with these ids
-            //Person1
-            player1 = peopleListResults.get(personId1);
-            TextView name_player1 = (TextView) findViewById(R.id.name_player1);
-            name_player1.setText(player1.getFullName());
-            ImageView img_player1 = (ImageView) findViewById(R.id.image_player1);
-            Picasso.with(this).load(player1.getPicture()).into(img_player1);
-
-            //Person2
-            player2 = peopleListResults.get(personId2);
-            TextView name_player2 = (TextView) findViewById(R.id.name_player2);
-            name_player2.setText(player2.getFullName());
-            ImageView img_player2 = (ImageView) findViewById(R.id.image_player2);
-            Picasso.with(this).load(player2.getPicture()).into(img_player2);
-        }
-    }
-
-    public int randomNumber(int range){
-        int num;
-        num = (int) (Math.random() * range) + 1;
-        return num;
-    }
-
+    /**
+     * Async task class to get json by making HTTP call
+     */
     private class ProcessJSON extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -287,7 +162,146 @@ public class MainActivity extends AppCompatActivity {
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
+
+            /**
+             * Start the game
+             * */
+
+            startGame();
         }
+    }
+
+    private void startGame() {
+        // Show Two Players
+        showSportpeople();
+
+        // Check user choice
+        checkChoice();
+    }
+
+    private void checkChoice() {
+        //Set Buttons click
+        btn_player1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set Result layout
+                setResultView();
+
+                if (points_player1 > points_player2) {
+                    userWin();
+                } else {
+                    userLose();
+                }
+            }
+        });
+
+        btn_player2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set Result layout
+                setResultView();
+
+                if (points_player2 > points_player1) {
+                    userWin();
+                } else {
+                    userLose();
+                }
+            }
+        });
+    }
+
+    private void setResultView() {
+        // Disable choose Buttons
+        btn_player1.setEnabled(false);
+        btn_player2.setEnabled(false);
+        // Show points
+        text_points_player1.setText("Points: " + String.valueOf(String.format("%.2f", points_player1))); //Round to 2 decimal
+        text_points_player1.setVisibility(View.VISIBLE);
+        text_points_player2.setText("Points: " + String.valueOf(String.format("%.2f", points_player2))); //Round to 2 decimal
+        text_points_player2.setVisibility(View.VISIBLE);
+        // Show message and play again button
+        result.setVisibility(View.VISIBLE);
+        btn_play.setVisibility(View.VISIBLE);
+    }
+
+    private void userWin() {
+        // Set Winner msg
+        result.setText(R.string.win_message);
+        result.setTextColor(Color.GREEN);
+        newgame();
+    }
+
+    private void userLose() {
+        // Set Winner msg
+        result.setText(R.string.lose_message);
+        result.setTextColor(Color.RED);
+        newgame();
+    }
+
+    private void newgame() {
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set new game view
+                btn_player1.setEnabled(true);
+                btn_player2.setEnabled(true);
+                result.setVisibility(View.INVISIBLE);
+                btn_play.setVisibility(View.INVISIBLE);
+                text_points_player1.setVisibility(View.INVISIBLE);
+                text_points_player2.setVisibility(View.INVISIBLE);
+
+                // Start new game
+                startGame();
+            }
+        });
+
+    }
+
+    private void showSportpeople() {
+        if(peopleListResults.isEmpty()){ // Not RealmDatabe in the phone
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setMessage("No network connection, check device settings and try again.");
+            alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            alertDialog.show();
+        }else{
+            //Get two random player's id
+            generateRandomPlayers(peopleListResults.size());
+
+            //Get people with these ids
+            //Person1
+            player1 = peopleListResults.get(personId1);
+            TextView name_player1 = (TextView) findViewById(R.id.name_player1);
+            name_player1.setText(player1.getFullName());
+            ImageView img_player1 = (ImageView) findViewById(R.id.image_player1);
+            Picasso.with(this).load(player1.getPicture()).into(img_player1);
+            points_player1 = player1.getPoints();
+
+            //Person2
+            player2 = peopleListResults.get(personId2);
+            TextView name_player2 = (TextView) findViewById(R.id.name_player2);
+            name_player2.setText(player2.getFullName());
+            ImageView img_player2 = (ImageView) findViewById(R.id.image_player2);
+            Picasso.with(this).load(player2.getPicture()).into(img_player2);
+            points_player2 = player2.getPoints();
+        }
+    }
+
+    private void generateRandomPlayers(int range) {
+        personId1 = randomNumber(range) - 1;
+        do {
+            personId2 = randomNumber(range) - 1;
+        } while (personId2 == personId1); //Check it is not the same person
+    }
+
+    public int randomNumber(int range){
+        int num;
+        num = (int) (Math.random() * range) + 1;
+        return num;
     }
 
     // Set menu
@@ -308,6 +322,10 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.about) {
             launchAbout(null);
+            return true;
+        }
+        if (id == R.id.exit) {
+            finish();
             return true;
         }
 

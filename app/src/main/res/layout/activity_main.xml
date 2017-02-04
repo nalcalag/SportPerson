@@ -15,14 +15,18 @@
         android:id="@+id/playerId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose the best player"
-        android:gravity="center"/>
+        android:text="@string/intro_msg"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:textColor="#424242"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="50dp">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -44,15 +48,19 @@
                 android:id="@+id/btn_player1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose"
+                android:text="@string/choose"
                 android:textColor="#fff"
-                android:backgroundTint="#36c565"/>
+                android:backgroundTint="#36C565"/>
+            <TextView
+                android:id="@+id/points_player1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="0.2"
             android:gravity="center">
             <TextView
                 android:id="@+id/vs"
@@ -81,9 +89,14 @@
                 android:id="@+id/btn_player2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose"
+                android:text="@string/choose"
                 android:textColor="#fff"
                 android:backgroundTint="#36c565"/>
+            <TextView
+                android:id="@+id/points_player2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -91,9 +104,8 @@
         android:id="@+id/result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Result"
         android:gravity="center"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:visibility="invisible"/>
 
     <Button
@@ -101,7 +113,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Play Again"
+        android:text="@string/play_btn"
         android:textColor="#fff"
         android:backgroundTint="#1493FF"
         android:layout_marginTop="30dp"

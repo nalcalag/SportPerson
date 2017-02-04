@@ -3,6 +3,9 @@
     <string name="aboutActivity_label">About</string>
     <string name="info">This app is about...</string>
     <string name="vs">VS</string>
-    <string name="win_message">Congratulations \n you won!</string>
-    <string name="lose_message">Sorry you lost</string>
+    <string name="win_message">You win!</string>
+    <string name="lose_message">You lose :(</string>
+    <string name="intro_msg">Choose the best player</string>
+    <string name="choose">Choose</string>
+    <string name="play_btn">Play Again</string>
 </resources>
