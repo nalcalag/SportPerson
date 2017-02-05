@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
     double points_player2;
     TextView text_points_player1;
     TextView text_points_player2;
+    TextView text_score;
+
+    int user_score = 0;
+    int score = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +73,14 @@ public class MainActivity extends AppCompatActivity {
         peopleListResults = realm.where(Person.class).findAll();
 
 
-        //Set Buttons Views
+        //Set Views
         btn_player1 = (Button) findViewById(R.id.btn_player1);
         btn_player2 = (Button) findViewById(R.id.btn_player2);
         result = (TextView) findViewById(R.id.result);
         btn_play = (Button) findViewById(R.id.btn_play);
         text_points_player1 = (TextView) findViewById(R.id.points_player1);
         text_points_player2 = (TextView) findViewById(R.id.points_player2);
+        text_score = (TextView) findViewById(R.id.score);
 
     }
 
@@ -228,6 +233,8 @@ public class MainActivity extends AppCompatActivity {
         // Set Winner msg
         result.setText(R.string.win_message);
         result.setTextColor(Color.GREEN);
+        user_score += 1;
+        updateScore();
         newgame();
     }
 
@@ -235,7 +242,13 @@ public class MainActivity extends AppCompatActivity {
         // Set Winner msg
         result.setText(R.string.lose_message);
         result.setTextColor(Color.RED);
+        score += 1;
+        updateScore();
         newgame();
+    }
+
+    private void updateScore() {
+        text_score.setText(String.valueOf(user_score) + " - " + String.valueOf(score));
     }
 
     private void newgame() {
@@ -295,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         personId1 = randomNumber(range) - 1;
         do {
             personId2 = randomNumber(range) - 1;
-        } while (personId2 == personId1); //Check it is not the same person
+        } while (String.valueOf(personId2).equals(String.valueOf(personId1))); //Check it is not the same person
     }
 
     public int randomNumber(int range){
